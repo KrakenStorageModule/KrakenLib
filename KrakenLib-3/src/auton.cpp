@@ -1,14 +1,35 @@
 #include "auton.hpp"
 #include "devices.hpp"
+#include "KrakenLib/odom.hpp"
+#include "pros/rtos.hpp"
+#include "pros/llemu.hpp"
+
+//Declare odom object here
+Odometry odom (imu, &parallelTracker, &perpedicularTracker,3.25, .75, 2.75);
 
 // Auton Subsystem Functions
-
+void trackOdom(){
+  while (true) {
+    pros::lcd::print(0, "x: %f", odom.getX());
+    pros::lcd::print(1, "y: %f", odom.getY());
+    pros::lcd::print(2, "theta: %f", odom.getHeading());
+    pros::delay(10);
+  }
+  
+}
 // Auton Routines
 
 
 
     //Run No auton
-    void nothing(){}
+    void nothing(){
+      runOdom(odom);
+      pros::Task trackOdomTask(trackOdom);
+    }
+
+    void blue(){
+      
+    }
 /**
  * \brief A structure containing information about an autonomous routine.
  *

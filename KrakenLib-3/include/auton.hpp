@@ -1,21 +1,16 @@
 #pragma once
-#include "main.h"
-
 // Function declarations
-void autonMogo();
-void autonWall();
-void autonLift();
-void autonIntake();
+#include <string>
 void trackOdom();
-void lateralPIDTune();
-void turningPIDTune();
-void soloAWP();
 void runSelectedAuton();
 void autonSelector();
 void nothing();
+void red();
+void blue();
 // External variable declarations
 extern float xValue;
 extern float yValue;
 extern float thetaValue;
 extern bool autonSelected;
 extern int selectedAuton;
+extern std::string color;
