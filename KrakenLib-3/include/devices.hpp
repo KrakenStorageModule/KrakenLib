@@ -1,11 +1,12 @@
 #pragma once
 
 #include "pros/adi.hpp"
-#include "pros/misc.hpp"
-#include "pros/motors.hpp"
 #include "pros/imu.hpp"
-#include "pros/rotation.hpp"
+#include "pros/misc.hpp"
 #include "pros/motor_group.hpp"
+#include "pros/motors.hpp"
+#include "pros/rotation.hpp"
+
 
 // ADI Devices (pistons)
 extern pros::adi::DigitalOut mogo1;
@@ -23,9 +24,7 @@ extern pros::Imu imu;
 extern pros::Rotation horizontal_encoder;
 extern pros::Rotation vertical_encoder;
 
-
-
-//drivetrain motor groups
+// drivetrain motor groups
 extern pros::MotorGroup left_motor_group;
 extern pros::MotorGroup right_motor_group;
 
@@ -47,7 +46,6 @@ extern double avgTempLeft;
 extern double avgTempRight;
 extern int avgTempTotal;
 extern std::string tempReturn;
-
 
 // Function Declarations
 void controllerHud();

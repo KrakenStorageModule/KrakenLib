@@ -1,14 +1,14 @@
 #include "main.h"
-
+#include "auton.hpp"
+#include "devices.hpp"
+#include "pros/rtos.hpp"
 /**
  * A callback function for LLEMU's center button.
  *
  * When this callback is fired, it will toggle line 2 of the LCD text between
  * "I was pressed!" and nothing.
  */
-void on_center_button() {
-
-}
+void on_center_button() {}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -17,7 +17,8 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-
+  // Auton Selector
+  pros::Task autonSelectorTask(autonSelector);
 }
 
 /**
@@ -49,7 +50,10 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() { 
+	//Works w/auton selector to run selected auton
+	runSelectedAuton(); 
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -66,7 +70,9 @@ void autonomous() {}
  */
 void opcontrol() {
 
-	while (true) {
-
-	}
+  // Temp Display
+  pros::Task temperatureDisplayTask(controllerHud);
+  while (true) {
+    pros::delay(20);
+  }
 }

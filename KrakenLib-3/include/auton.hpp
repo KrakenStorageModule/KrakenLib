@@ -1,5 +1,6 @@
 #pragma once
 #include "main.h"
+
 // Function declarations
 void autonMogo();
 void autonWall();
@@ -11,6 +12,7 @@ void turningPIDTune();
 void soloAWP();
 void runSelectedAuton();
 void autonSelector();
+void nothing();
 // External variable declarations
 extern float xValue;
 extern float yValue;
