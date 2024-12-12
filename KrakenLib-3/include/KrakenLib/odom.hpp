@@ -38,7 +38,7 @@ public:
     double getY() const { return y; }
     double getHeading() const { return heading; }
     void setPose();
-private:
+    private:
     pros::Imu &imu;
     pros::Rotation *parallelWheelSensor; // Pointer to allow for optional sensor
     pros::Rotation *perpendicularWheelSensor; // Pointer to allow for optional sensor

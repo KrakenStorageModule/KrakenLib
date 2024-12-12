@@ -7,6 +7,7 @@ void autonSelector();
 void nothing();
 void red();
 void blue();
+void test();
 // External variable declarations
 extern float xValue;
 extern float yValue;

@@ -1,7 +1,7 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "KrakenLib-3",
+        "project_name": "KrakenLib",
         "target": "v5",
         "templates": {
             "kernel": {

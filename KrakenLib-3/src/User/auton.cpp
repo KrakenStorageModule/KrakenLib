@@ -1,13 +1,40 @@
 #include "auton.hpp"
+#include "KrakenLib/2dmp.hpp"
 #include "devices.hpp"
 #include "KrakenLib/odom.hpp"
 #include "pros/rtos.hpp"
 #include "pros/llemu.hpp"
+#include "KrakenLib/ramsete.hpp"
+#include "KrakenLib/splineGen.hpp"
+#include "KrakenLib/point.hpp"
+#include "KrakenLib/interface.hpp"
 
+using std::string;
 //Declare odom object here
-Odometry odom (imu, &parallelTracker, &perpedicularTracker,3.25, .75, 2.75);
+Odometry odom(imu, &parallelTracker, &perpedicularTracker, 3.25, .75, 2.75);
 
+//Declare RAMSETE Controller
+RamseteController ramseteController(0.5, 0.5, 0.5, 3.25, 4.0, 12.0);
+
+//Declare Spline Generation Tool
+SplineGen splineGen;
+//Declare Motion Profile
+MotionProfile MotionProfile(76.76, 12.0);
 // Auton Subsystem Functions
+void autonIntake(string state) {
+  if(state == "intake") {
+    intakeHook.move_voltage(1200000);
+    intakeFront.move_voltage(1200000);
+  } else if (state == "outtake") {
+    intakeHook.move_voltage(-1200000);
+    intakeFront.move_voltage(-1200000);
+  } else if (state == "kill") {
+    intakeHook.move_voltage(0);
+    intakeFront.move_voltage(0);
+  }
+}
+
+//Displays Position on Brain Screen
 void trackOdom(){
   while (true) {
     pros::lcd::print(0, "x: %f", odom.getX());
@@ -19,16 +46,30 @@ void trackOdom(){
 }
 // Auton Routines
 
-
-
     //Run No auton
     void nothing(){
       runOdom(odom);
       pros::Task trackOdomTask(trackOdom);
     }
 
-    void blue(){
-      
+    void test(){
+      runOdom(odom);
+      pros::Task trackOdomTask(trackOdom);
+      //adding points
+      Point point1 = Point(0, 0, 0, 0, 0); //start point
+      Point point2 = Point(0, 10, 0, 0, 0); //end point
+      MotionProfile.addWaypoint(point1); //adding start point to path
+      MotionProfile.addWaypoint(point2); //adding end point to path
+      //running path
+      run(ramseteController, odom, left_motor_group, right_motor_group);
+      autonIntake("intake"); //Starts the intake until it is killed
+      Point point3 = Point(0, 0, 0, 0, 0); //start point
+      Point point4 = Point(0, 10, 0, 0, 0); //end point
+      MotionProfile.addWaypoint(point3); //adding start point to path
+      MotionProfile.addWaypoint(point4); //adding end point to path
+      //running path
+      run(ramseteController, odom, left_motor_group, right_motor_group);
+      autonIntake("outtake"); //Stops the intake after movement is finished
     }
 /**
  * \brief A structure containing information about an autonomous routine.
@@ -57,7 +98,8 @@ struct AutonRoutine {
 /// and executed during the autonomous phase. Each routine is represented
 /// by a name and a corresponding function pointer that implements the routine.
 
-const AutonRoutine autonRoutines[] = {{"No Auton", nothing}};
+const AutonRoutine autonRoutines[] = {{"No Auton", nothing}, 
+                                      {"Test", test}};
 const int numAutons = sizeof(autonRoutines) / sizeof(autonRoutines[0]);
 
 int selectedAuton = 0;

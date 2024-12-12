@@ -1,58 +1,39 @@
-# KrakenLib: An Advanced Motion Control Library For Vex V5 Robotics
+# KrakenLib: An Advanced Motion Control Library For Vex V5 Robotics 🐙
 
-       .--.
-      |o_o |
-      |:_/ |
-     //   \ \
-    (|     | )
-   /'\_   _/`\
-   \___)=(___/
+Welcome to KrakenLib, a sophisticated motion control library designed for VEX robotics. This library focuses on advanced trajectory tracking and path generation algorithms, providing users with the tools needed to create flexible autonomous routines.
 
+## Features 🐙
+- **Ramsete Controller**: An algorithm for following predefined paths with high accuracy.
+- **Motion Profile Generation**: Smoothly defines how the robot should accelerate and decelerate along a trajectory.
+- **PID Control**: Ensures precise control of robot movements through real-time feedback.
+- **Flexible Waypoint Management**: Easily manage and modify waypoints for autonomous routines.
 
-Welcome to the KrakenLib project! This documentation is designed to help new users understand the structure of the code, how to use the various components, and how to contribute to the project.
+## Getting Started 🐙
+To get started with KrakenLib, ensure you have the following prerequisites:
+1. A VEX robotics kit.
+2. PROS development environment set up.
+3. Basic knowledge of C++ programming.
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Getting Started](#getting-started)
-- [Using the PID Controller](#using-the-pid-controller)
-- [Implementing Odometry](#implementing-odometry)
-- [Motion Profiling and Splines](#motion-profiling-and-splines)
-- [Contributing](#contributing)
+### Installation 🐙
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/KrakenLib.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd KrakenLib
+   ```
+3. Open the project in your preferred IDE.
 
-## To Do List
-- Implement motion profiling and spline generation.
-- Integrate Ramsete controller for trajectory following.
-- Develop a user interface for easier interaction.
-- Add more tutorials and examples in the documentation.
-- Test and refine existing features.
+## Usage 🐙
+Refer to the [Tuning Tutorials](docs/Tuning_Tutorials.md) for detailed instructions on how to tune each algorithm and implement them in your projects.
 
-## Introduction
-KrakenLib is a robotics library designed to facilitate the development of autonomous robot systems. It provides various tools and classes to handle motion, control, and sensor integration.
+## Contributing 🐙
+We welcome contributions to KrakenLib! If you have suggestions or improvements, please submit a pull request or open an issue in the repository.
 
-## Getting Started
-To get started with KrakenLib, clone the repository and set up your development environment. Ensure you have the necessary dependencies installed.
+## License 🐙
+This project is licensed under the MIT License. See the LICENSE file for more details.
 
-```bash
-git clone https://github.com/your-repo/KrakenLib.git
-cd KrakenLib
-```
+---
 
-## Using the PID Controller
-The PID controller is implemented in the `pid.hpp` and `pid.cpp` files. You can create an instance of the PID controller and use it to manage the robot's movements based on error values.
-
-### Example Usage
-```cpp
-PID myPID(1.0, 0.1, 0.01);
-float output = myPID.update(targetValue, currentValue);
-```
-
-## Implementing Odometry
-The odometry system is designed to track the robot's position and heading using various sensors. Refer to the `odom.hpp` for details on how to initialize and use the odometry class.
-
-## Motion Profiling and Splines
-This section will cover how to implement motion profiling and spline generation for smooth movement paths.
-
-## Contributing
-We welcome contributions! Please fork the repository and submit a pull request with your changes. Ensure your code is well-documented and tested.
-
-Happy coding! 🦑
+Feel free to reach out if you have any questions or need further assistance! 🐙
