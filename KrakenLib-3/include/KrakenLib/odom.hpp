@@ -29,7 +29,9 @@ public:
              pros::Rotation *perpendicularWheelSensor = nullptr,
              float wheel_diameter = 3.25,                  
              float gear_ratio = (36.0 / 48.0),
-             float tracking_wheel_diameter = 2.75);
+             float tracking_wheel_diameter = 2.75,
+             double parallelOffset = 0.0,
+             double perpendicularOffset = 0.0);
 
     // Member functions
     void update();
@@ -55,6 +57,13 @@ public:
     double start_heading = 0;
     double heading = 0;
     double previous_distance_traveled = 0;
+    double parallelOffset = 0.0;
+    double perpendicularOffset = 0.0;
+    double previous_heading = 0;
+    double deltaTheta = 0;
+    double deltaParallel = 0;
+    double deltaPerpendicular = 0;
+    double headingRad = 0;
     void calculateOdometry();
     void setPose(double x, double y, double heading);
 };
