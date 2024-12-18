@@ -14,8 +14,7 @@ using std::string;
 Odometry odom(imu, &parallelTracker, &perpedicularTracker, 3.25, .75, 2.75);
 
 //Declare RAMSETE Controller
-RamseteController ramseteController(0.5, 0.5, 0.5, 3.25, 4.0, 12.0);
-
+RamseteController ramseteController(1,2,3,4, 76.76);
 //Declare Spline Generation Tool
 SplineGen splineGen;
 //Declare Motion Profile
@@ -61,15 +60,15 @@ void trackOdom(){
       MotionProfile.addWaypoint(point1); //adding start point to path
       MotionProfile.addWaypoint(point2); //adding end point to path
       //running path
-      run(ramseteController, odom, left_motor_group, right_motor_group);
+      run(ramseteController, odom, MotionProfile);
       autonIntake("intake"); //Starts the intake until it is killed
       Point point3 = Point(0, 0, 0, 0, 0); //start point
       Point point4 = Point(0, 10, 0, 0, 0); //end point
       MotionProfile.addWaypoint(point3); //adding start point to path
       MotionProfile.addWaypoint(point4); //adding end point to path
       //running path
-      run(ramseteController, odom, left_motor_group, right_motor_group);
-      autonIntake("outtake"); //Stops the intake after movement is finished
+      run(ramseteController, odom, MotionProfile);
+      autonIntake("kill"); //Stops the intake after movement is finished
     }
 /**
  * \brief A structure containing information about an autonomous routine.

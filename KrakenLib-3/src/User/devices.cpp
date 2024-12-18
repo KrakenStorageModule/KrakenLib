@@ -24,6 +24,10 @@ void pidTest() {
 pros::MotorGroup left_motor_group({1, 2, 3});
 pros::MotorGroup right_motor_group({4, 5, 6});
 
+//motors
+pros::Motor intakeFront(8);
+pros::Motor intakeHook(9);
+pros::Motor lbArm(10);
 // sensors
 pros::Imu imu(2);
 pros::Rotation parallelTracker(1);

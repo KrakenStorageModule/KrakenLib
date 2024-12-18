@@ -1,6 +1,7 @@
 //You can create a function that takes a list of waypoints and executes the movement routine:
 
 #include "interface.hpp"
+#include "KrakenLib/2dmp.hpp"
 
 // Define a threshold for reaching the desired state
  const double threshold = 0.1;
@@ -12,12 +13,10 @@ bool reachedDesiredState(const Point& currentPose, const Point& desiredState) {
 
 //You need to tune the max acceleration
 void run(RamseteController& ramseteController, 
-                          Odometry& odometry, 
-                          pros::MotorGroup& leftDrive, 
-                          pros::MotorGroup& rightDrive,
+                          Odometry& odometry, MotionProfile motionProfile,
                           bool reverse,
                           bool clockwise) {
-    MotionProfile motionProfile(76.6, 12);
+    
     SplineGen splineGen;
     // Retrieve motion profile points
      auto motionProfilePoints = motionProfile.getMotionProfile();
@@ -42,7 +41,7 @@ void run(RamseteController& ramseteController,
             ramseteController.update(currentPose, desiredState);
 
             // Apply motor voltages
-            ramseteController.applyMotorVoltages(leftDrive, rightDrive);
+            ramseteController.applyMotorVoltages();
 
             // Check if the robot has reached the desired state
             if (reachedDesiredState(currentPose, desiredState)) {

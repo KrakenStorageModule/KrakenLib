@@ -151,56 +151,152 @@ void Odometry::setPose(double x, double y, double heading) {
 
 //   }
 // }
+// void Odometry::calculateOdometry() {
+//   // Calculate heading and convert to radians
+
+//   double heading = std::fmod((360 - imu.get_heading()) + start_heading, 360);
+//   double headingRad = heading * (M_PI / 180);
+
+//   // Change in heading
+//   double deltaTheta = heading - previous_heading;
+
+//   // Initialize deltas
+//   double deltaParallel = 0;
+//   double deltaPerpendicular = 0;
+
+//   // Process parallel wheel
+//   if (parallelWheelSensor) {
+//     double parallelDistance = (parallelWheelSensor->get_position() / 360.0) * 
+//                                tracking_wheel_circumference;
+//     deltaParallel = parallelDistance - previous_parallel_distance;
+//     previous_parallel_distance = parallelDistance;
+//   }
+
+//   // Process perpendicular wheel
+//   if (perpendicularWheelSensor) {
+//     double perpendicularDistance = (perpendicularWheelSensor->get_position() / 360.0) *
+//                                     tracking_wheel_circumference;
+//     deltaPerpendicular = perpendicularDistance - previous_perpendicular_distance;
+//     previous_perpendicular_distance = perpendicularDistance;
+//   }
+
+//   // Fallback to motor encoders if wheels are unavailable
+//   double distanceTraveled = 0;
+//   if (!parallelWheelSensor || !perpendicularWheelSensor) {
+//     double averageEncoderPosition = (left_motor_group.get_position() + 
+//                                      right_motor_group.get_position()) / 2;
+//     distanceTraveled = (averageEncoderPosition / 360.0) * 
+//                         wheel_circumference * gear_ratio;
+//     double deltaDistance = distanceTraveled - previous_distance_traveled;
+  
+//     if(!parallelWheelSensor){
+//     deltaParallel = parallelWheelSensor ? deltaParallel : deltaDistance;
+//    }
+//    if(!perpendicularWheelSensor){
+//     deltaPerpendicular = perpendicularWheelSensor ? deltaPerpendicular : deltaDistance;
+//     previous_distance_traveled = distanceTraveled;
+//   }
+//   }
+
+//   // Transform local deltas to global coordinates
+//  // double deltaY = deltaParallel * std::cos(headingRad) - deltaPerpendicular * std::sin(headingRad);
+//   //double deltaX = deltaParallel * std::sin(headingRad) + deltaPerpendicular * std::cos(headingRad);
+  
+//    double deltaY = (deltaParallel * std::cos(headingRad) - deltaPerpendicular * std::sin(headingRad)) + 
+//                     (parallelOffset * std::sin(headingRad) + perpendicularOffset * std::cos(headingRad));
+//     double deltaX = (deltaParallel * std::sin(headingRad) + deltaPerpendicular * std::cos(headingRad)) + 
+//                     (parallelOffset * std::cos(headingRad) - perpendicularOffset * std::sin(headingRad));
+  
+  
+  
+  
+
+//   // Update global position
+//   x += deltaX;
+//   y += deltaY;
+
+//   // Update previous heading
+//   previous_heading = heading;
+// }
 void Odometry::calculateOdometry() {
-  // Calculate heading and convert to radians
-  double heading = std::fmod((360 - imu.get_heading()) + start_heading, 360);
-  double headingRad = heading * (M_PI / 180);
+  // Calculate the current heading and convert to radians
+  double heading = std::fmod((360 - imu.get_heading()) + start_heading, 360); // Heading is normalized to [0, 360)
+  double headingRad = heading * (M_PI / 180); // Convert heading to radians
 
-  // Change in heading
+  // Calculate the change in heading (deltaTheta) since the last update
   double deltaTheta = heading - previous_heading;
+  
+  // Normalize heading change to be within [-180, 180]
+  if (deltaTheta < -180) {
+    deltaTheta += 360;
+  } else if (deltaTheta > 180) {
+    deltaTheta -= 360;
+  }
 
-  // Initialize deltas
+  // Initialize deltas for position calculation
   double deltaParallel = 0;
   double deltaPerpendicular = 0;
 
-  // Process parallel wheel
+  // Process parallel wheel if available
   if (parallelWheelSensor) {
-    double parallelDistance = (parallelWheelSensor->get_position() / 360.0) * 
-                               tracking_wheel_circumference;
-    deltaParallel = parallelDistance - previous_parallel_distance;
+    double parallelDistance = (parallelWheelSensor->get_position() / 360.0) * tracking_wheel_circumference; // Convert to actual distance
+    deltaParallel = parallelDistance - previous_parallel_distance;  // Calculate change in distance for X-axis
     previous_parallel_distance = parallelDistance;
   }
 
-  // Process perpendicular wheel
+  // Process perpendicular wheel if available
   if (perpendicularWheelSensor) {
-    double perpendicularDistance = (perpendicularWheelSensor->get_position() / 360.0) *
-                                    tracking_wheel_circumference;
-    deltaPerpendicular = perpendicularDistance - previous_perpendicular_distance;
+    double perpendicularDistance = (perpendicularWheelSensor->get_position() / 360.0) * tracking_wheel_circumference; // Convert to actual distance
+    deltaPerpendicular = perpendicularDistance - previous_perpendicular_distance;  // Calculate change in distance for Y-axis
     previous_perpendicular_distance = perpendicularDistance;
   }
 
-  // Fallback to motor encoders if wheels are unavailable
-  double distanceTraveled = 0;
-  if (!parallelWheelSensor || !perpendicularWheelSensor) {
-    double averageEncoderPosition = (left_motor_group.get_position() + 
-                                     right_motor_group.get_position()) / 2;
-    distanceTraveled = (averageEncoderPosition / 360.0) * 
-                        wheel_circumference * gear_ratio;
-    double deltaDistance = distanceTraveled - previous_distance_traveled;
-    deltaParallel = parallelWheelSensor ? deltaParallel : deltaDistance;
-    deltaPerpendicular = perpendicularWheelSensor ? deltaPerpendicular : deltaDistance;
+  // If only the parallel wheel is used, use IME to replace perpendicular movement (Y-axis)
+  if (parallelWheelSensor && !perpendicularWheelSensor) {
+    double averageEncoderPosition = (left_motor_group.get_position() + right_motor_group.get_position()) / 2;
+    double distanceTraveled = (averageEncoderPosition / 360.0) * wheel_circumference * gear_ratio;
+    deltaPerpendicular = distanceTraveled - previous_distance_traveled;  // Use IME for Y-axis
+
     previous_distance_traveled = distanceTraveled;
   }
 
-  // Transform local deltas to global coordinates
-  double deltaX = deltaParallel * std::cos(headingRad) - deltaPerpendicular * std::sin(headingRad);
-  double deltaY = deltaParallel * std::sin(headingRad) + deltaPerpendicular * std::cos(headingRad);
+  // If only the perpendicular wheel is used, use IME to replace parallel movement (X-axis)
+  if (!parallelWheelSensor && perpendicularWheelSensor) {
+    double averageEncoderPosition = (left_motor_group.get_position() + right_motor_group.get_position()) / 2;
+    double distanceTraveled = (averageEncoderPosition / 360.0) * wheel_circumference * gear_ratio;
+    deltaParallel = distanceTraveled - previous_distance_traveled;  // Use IME for X-axis
 
-  // Update global position
+    previous_distance_traveled = distanceTraveled;
+  }
+
+  // If neither parallel nor perpendicular wheels are used, use IME for both axes
+  if (!parallelWheelSensor && !perpendicularWheelSensor) {
+    double averageEncoderPosition = (left_motor_group.get_position() + right_motor_group.get_position()) / 2;
+    double distanceTraveled = (averageEncoderPosition / 360.0) * wheel_circumference * gear_ratio;
+    deltaParallel = distanceTraveled;  // Use IME for X-axis
+    deltaPerpendicular = distanceTraveled;  // Use IME for Y-axis
+
+    previous_distance_traveled = distanceTraveled;
+  }
+
+  // Update heading with deltaTheta (change in robot's orientation)
+  heading += deltaTheta;
+  heading = std::fmod(heading, 360);  // Normalize to keep within [0, 360) degrees
+  headingRad = heading * (M_PI / 180);  // Convert to radians for math use
+
+  // Update the robot's position based on wheel distances
+  double deltaX = (deltaParallel * std::cos(headingRad)) - (deltaPerpendicular * std::sin(headingRad)); // Forward/backward motion
+  double deltaY = (deltaParallel * std::sin(headingRad)) + (deltaPerpendicular * std::cos(headingRad)); // Side-to-side motion
+
+  // Correct offsets if necessary (adjust for physical offsets between wheels)
+  deltaX += (parallelOffset * std::sin(headingRad) + perpendicularOffset * std::cos(headingRad));
+  deltaY += (parallelOffset * std::cos(headingRad) - perpendicularOffset * std::sin(headingRad));
+
+  // Update global position with the calculated changes
   x += deltaX;
   y += deltaY;
 
-  // Update previous heading
+  // Update previous heading for next cycle
   previous_heading = heading;
 }
 
