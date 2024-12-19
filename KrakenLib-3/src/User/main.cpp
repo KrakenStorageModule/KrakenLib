@@ -3,7 +3,6 @@
 #include "devices.hpp"
 #include "pros/rtos.hpp"
 
-
 /**
  * A callback function for LLEMU's center button.
  *
@@ -52,11 +51,10 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() { 
+void autonomous() {
 
-
-	//Works w/auton selector to run selected auton
-	runSelectedAuton(); 
+  // Works w/auton selector to run selected auton
+  runSelectedAuton();
 }
 
 /**

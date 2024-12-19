@@ -2,6 +2,7 @@
 #include "KrakenLib/pid.hpp"
 #include "auton.hpp"
 #include "pros/imu.hpp"
+#include "pros/misc.h"
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 double avgTempLeft = 0;
@@ -24,7 +25,7 @@ void pidTest() {
 pros::MotorGroup left_motor_group({1, 2, 3});
 pros::MotorGroup right_motor_group({4, 5, 6});
 
-//motors
+// motors
 pros::Motor intakeFront(8);
 pros::Motor intakeHook(9);
 pros::Motor lbArm(10);
@@ -56,9 +57,42 @@ void colorsort() {
   }
 }
 
+/**
+ * @brief Runs an anti-jam loop on the intake hook motor to clear any
+ * stuck rings.
+ *
+ * This function will run indefinitely until the robot is turned off.
+ *
+ * @note This function is not thread-safe and should not be run in a
+ * separate thread. It should be run in a task, such as a periodic
+ * task.
+ */
+
+
+//DRIVER CONTROL CODE
+void pneumaticDriverControl() {
+
+  if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+    mogoToggle = !mogoToggle;
+    mogo1.set_value(mogoToggle);
+    mogo2.set_value(mogoToggle);
+  }
+  if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+    doinkerToggle = !doinkerToggle;
+    doinker.set_value(doinkerToggle);
+  }
+  if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+    rushClampToggle = !rushClampToggle;
+    rushClamp.set_value(rushClampToggle);
+  }
+  if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+    intakePistonToggle = !intakePistonToggle;
+    intakeLift.set_value(intakePistonToggle);
+  }
+}
 // intake driver control -> integrate colorsort later on
 void intakeControl() {
-  
+
   if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
     intakeFront.move_voltage(12000);
     intakeHook.move_voltage(12000);
@@ -71,6 +105,27 @@ void intakeControl() {
   }
 }
 
+void lbArmControl() {
+  //disengaged
+  if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+   while (lbPID.deadband > lbPID.error) {
+    lbArm.move_voltage(lbPID.update(0, lbArmTrack.get_position()));
+  }
+  }
+  //loading
+  if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
+   while (lbPID.deadband > lbPID.error) {
+    lbArm.move_voltage(lbPID.update(30, lbArmTrack.get_position()));
+  }
+  }
+  //scoring
+  if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
+   while (lbPID.deadband > lbPID.error) {
+    lbArm.move_voltage(lbPID.update(110, lbArmTrack.get_position()));
+  }
+}
+
+}
 // Temp Display Code
 void controllerHud() {
   while (true) {

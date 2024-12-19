@@ -50,3 +50,6 @@ extern std::string tempReturn;
 // Function Declarations
 void controllerHud();
 void PIDTest();
+void pneumaticDriverControl();
+void lbArmControl();
+void antijam();

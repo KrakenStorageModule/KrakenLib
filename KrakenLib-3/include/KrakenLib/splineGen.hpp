@@ -1,8 +1,8 @@
 #ifndef SPLINE_GEN_HPP
 #define SPLINE_GEN_HPP
 
-#include <vector>
 #include "point.hpp" // Include the Point struct
+#include <vector>
 
 /**
  * @brief Class to generate a quintic Hermite spline from a set of waypoints.
@@ -21,17 +21,17 @@
  */
 class SplineGen {
 public:
-    SplineGen();
+  SplineGen();
 
-    void addWaypoint(const Point& waypoint);
-    void generateSpline();
-    const std::vector<Point>& getSpline() const;
+  void addWaypoint(const Point &waypoint);
+  void generateSpline();
+  const std::vector<Point> &getSpline() const;
 
 private:
-    std::vector<Point> waypoints; // List of waypoints
-    std::vector<Point> spline; // Generated spline points
+  std::vector<Point> waypoints; // List of waypoints
+  std::vector<Point> spline;    // Generated spline points
 
-    void calculateQuinticHermiteSpline();
+  void calculateQuinticHermiteSpline();
 };
 
 #endif // SPLINE_GEN_HPP
