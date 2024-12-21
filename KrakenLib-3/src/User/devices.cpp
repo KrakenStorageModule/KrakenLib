@@ -68,8 +68,7 @@ void colorsort() {
  * task.
  */
 
-
-//DRIVER CONTROL CODE
+// DRIVER CONTROL CODE
 void pneumaticDriverControl() {
 
   if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
@@ -77,11 +76,11 @@ void pneumaticDriverControl() {
     mogo1.set_value(mogoToggle);
     mogo2.set_value(mogoToggle);
   }
-  if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+  if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
     doinkerToggle = !doinkerToggle;
     doinker.set_value(doinkerToggle);
   }
-  if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+  if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
     rushClampToggle = !rushClampToggle;
     rushClamp.set_value(rushClampToggle);
   }
@@ -106,25 +105,24 @@ void intakeControl() {
 }
 
 void lbArmControl() {
-  //disengaged
-  if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-   while (lbPID.deadband > lbPID.error) {
-    lbArm.move_voltage(lbPID.update(0, lbArmTrack.get_position()));
+  // disengaged
+  if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+    while (lbPID.deadband > lbPID.error) {
+      lbArm.move_voltage(lbPID.update(0, lbArmTrack.get_position()));
+    }
   }
+  // loading
+  if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+    while (lbPID.deadband > lbPID.error) {
+      lbArm.move_voltage(lbPID.update(30, lbArmTrack.get_position()));
+    }
   }
-  //loading
-  if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
-   while (lbPID.deadband > lbPID.error) {
-    lbArm.move_voltage(lbPID.update(30, lbArmTrack.get_position()));
+  // scoring
+  if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+    while (lbPID.deadband > lbPID.error) {
+      lbArm.move_voltage(lbPID.update(110, lbArmTrack.get_position()));
+    }
   }
-  }
-  //scoring
-  if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
-   while (lbPID.deadband > lbPID.error) {
-    lbArm.move_voltage(lbPID.update(110, lbArmTrack.get_position()));
-  }
-}
-
 }
 // Temp Display Code
 void controllerHud() {
@@ -145,5 +143,72 @@ void controllerHud() {
     tempReturn = std::to_string(avgTempTotal);
 
     pros::delay(100);
+  }
+}
+
+// Drivetrain Code (Driver Control)
+/**
+ * \brief Tank control function
+ * A Polaris-Samurai Classic. Right joystick controls right side of the robot
+ *and left joystick controls left side. Simple enough
+ *
+ *(Bilals Balls)
+ */
+void tank() {
+  left_motor_group.move_voltage(
+      94 * controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+  right_motor_group.move_voltage(
+      94 * controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+}
+
+/**
+ * \brief "Standard" Driver Control (Dual Stick Arcade)
+ *  Like a video game => left joystick controls forward/backward and right
+ * joystick controls turns
+ *
+ */
+void splitArcade() {
+  // Retrieve the necessary joystick values
+  int leftY = 94 * controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+  int rightX = 94 * controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+
+  // Move the left side of the robot
+  left_motor_group.move_voltage(leftY + rightX);
+
+  // Move the right side of the robot
+  right_motor_group.move_voltage(leftY - rightX);
+}
+
+/**
+ * @brief
+ * Freaky style driving => 1 joystick for everything
+ *
+ * \param rightOrLeft
+ *        A string indicating which joystick to use for control.
+ *        Accepts "right" or "left".
+ */
+void singleStickArcade(std::string rightOrLeft) {
+  // Retrieve the necessary joystick values
+  // multiply by 94 to get values between -12000 and 12000 (max voltage)
+  // controller.get_analog only returns values between 0 and 127
+  if (rightOrLeft == "right") {
+    int rightY = 94 * controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+    int rightX = 94 * controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+
+    // Move the left side of the robot
+    left_motor_group.move_voltage(rightY + rightX);
+
+    // Move the right side of the robot
+    right_motor_group.move_voltage(rightY - rightX);
+  }
+  if (rightOrLeft == "left") {
+    int leftY = 94 * controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    int leftX = 94 * controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+
+    // Move the left side of the robot
+    left_motor_group.move_voltage(leftY + leftX);
+
+    // Move the right side of the robot
+    right_motor_group.move_voltage(leftY - leftX);
   }
 }

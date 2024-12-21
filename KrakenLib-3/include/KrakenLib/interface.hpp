@@ -1,5 +1,5 @@
 #pragma once
-#include "2dmp.hpp"
+#include "KrakenLib/2dmp.hpp"
 #include "KrakenLib/odom.hpp"
 #include "KrakenLib/point.hpp"
 #include "KrakenLib/ramsete.hpp"
@@ -11,4 +11,5 @@ bool reachedDesiredState(const Point &currentPose, const Point &desiredState);
 
 // Function to execute the movement routine
 void run(RamseteController &ramseteController, Odometry &odometry,
-         MotionProfile, bool reverse = false, bool clockwise = false);
+         MotionProfile motionProfile, SplineGen &splineGen, bool reverse = false,
+         bool clockwise = false);

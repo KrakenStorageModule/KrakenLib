@@ -24,8 +24,15 @@ PID::PID(float kP, float kI, float kD)
  */
 float PID::update(float target, float currentPos) {
   error = target - currentPos;
+
+  // integral reset after crossing setpoint
+  if ((prevError > 0 && error < 0) || (prevError < 0 && error > 0)) {
+    integral = 0;
+  }
+
   // Calculate integral term
-  integral += error;
+  integral +=
+      (prevError + error) / 2; // Use average of current and previous error;
 
   // Calculate derivative term
   const float derivative = error - prevError;

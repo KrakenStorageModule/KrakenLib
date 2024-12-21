@@ -12,7 +12,8 @@
 
 using std::string;
 // Declare odom object here
-Odometry odom(imu, &parallelTracker, &perpedicularTracker, 3.25, .75, 2.75);
+Odometry odom(imu, &parallelTracker, &perpedicularTracker, 3.25, .75, 2.75, 0,
+              0);
 
 // Declare RAMSETE Controller
 RamseteController ramseteController(1, 2, 3, 4, 76.76);
@@ -33,7 +34,7 @@ void autonIntake(string state) {
     intakeFront.move_voltage(0);
   }
 }
-//torque value needs to be adjusted
+// torque value needs to be adjusted
 
 /**
  * @brief Runs an anti-jam routine for the intake.
@@ -45,19 +46,20 @@ void autonIntake(string state) {
  *
  * This function is meant to be run in a separate task.
  */
-void antijam(){
+void antijam() {
   double attemptedVoltage = intakeHook.get_voltage();
-  while(true){
-    if(intakeHook.get_torque() > 1.1){
+  while (true) {
+    if (intakeHook.get_torque() > 1.1) {
       intakeHook.move_voltage(-120000);
       pros::c::delay(200);
       intakeHook.move_voltage(attemptedVoltage);
+    }
   }
-}
 }
 // Displays Position on Brain Screen
 /**
- * @brief Updates Odom and displays position on Brain Screen -> Intended to be run as a task
+ * @brief Updates Odom and displays position on Brain Screen -> Intended to be
+ * run as a task
  */
 void trackOdom() {
   while (true) {
@@ -71,10 +73,7 @@ void trackOdom() {
 // Auton Routines
 
 // Run No auton
-void nothing() {
-
-  pros::Task trackOdomTask(trackOdom);
-}
+void nothing() { pros::Task trackOdomTask(trackOdom); }
 
 void test() {
   pros::Task antijamTask(antijam);
@@ -85,14 +84,14 @@ void test() {
   MotionProfile.addWaypoint(point1);    // adding start point to path
   MotionProfile.addWaypoint(point2);    // adding end point to path
   // running path
-  run(ramseteController, odom, MotionProfile);
+  run(ramseteController, odom, MotionProfile, splineGen);
   autonIntake("intake");                // Starts the intake until it is killed
   Point point3 = Point(0, 0, 0, 0, 0);  // start point
   Point point4 = Point(0, 10, 0, 0, 0); // end point
   MotionProfile.addWaypoint(point3);    // adding start point to path
   MotionProfile.addWaypoint(point4);    // adding end point to path
   // running path
-  run(ramseteController, odom, MotionProfile);
+  run(ramseteController, odom, MotionProfile, splineGen);
   autonIntake("kill"); // Stops the intake after movement is finished
 }
 /**

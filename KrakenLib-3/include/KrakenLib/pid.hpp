@@ -38,4 +38,5 @@ protected:
   float kD;
   float integral = 0;
   float prevError = 0;
+  float prevIntegral = 0;
 };

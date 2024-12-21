@@ -1,5 +1,5 @@
 #pragma once
-#include <cmath>
+//include <cmath>
 /**
  * @brief Struct representing a point in 2D space with additional properties.
  */

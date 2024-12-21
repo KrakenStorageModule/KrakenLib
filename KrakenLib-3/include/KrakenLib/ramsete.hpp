@@ -30,7 +30,6 @@
 #include "point.hpp"
 #include <cmath>
 
-
 class RamseteController {
 public:
   RamseteController(double k1, double k2, double k3, double L,

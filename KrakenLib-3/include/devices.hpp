@@ -5,8 +5,10 @@
 #include "pros/misc.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
-#include "pros/rotation.hpp"
 #include "pros/optical.hpp"
+#include "pros/rotation.hpp"
+#include <string>
+
 
 // ADI Devices (pistons)
 extern pros::adi::DigitalOut mogo1;
@@ -38,8 +40,6 @@ extern bool rushClampToggle;
 extern bool intakePistonToggle;
 extern bool autonRan;
 
-
-
 // Controller
 extern pros::Controller controller;
 extern double avgTempLeft;
@@ -53,3 +53,7 @@ void PIDTest();
 void pneumaticDriverControl();
 void lbArmControl();
 void antijam();
+void tank();
+void singleStickArcade();
+void splitArcade();
+void intakeControl();

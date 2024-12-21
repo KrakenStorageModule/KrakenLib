@@ -71,10 +71,14 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-
   // Temp Display
   pros::Task temperatureDisplayTask(controllerHud);
+  // wallstake arm task
+  pros::Task wallstakeArmTask(lbArmControl);
   while (true) {
+    splitArcade();
+    pneumaticDriverControl();
     pros::delay(20);
+    intakeControl();
   }
 }

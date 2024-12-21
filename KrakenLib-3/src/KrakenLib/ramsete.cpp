@@ -128,8 +128,9 @@
 //     if (std::abs(x) < 1e-6) return 1.0; // Avoid numerical instability
 //     return std::sin(x) / x;
 // }
-#include "ramsete.hpp"
+#include "KrakenLib/ramsete.hpp"
 #include "devices.hpp"
+#include <cmath>
 
 RamseteController::RamseteController(double k1, double k2, double k3, double L,
                                      double max_velocity)
@@ -196,3 +197,81 @@ double RamseteController::sinc(double x) const {
     return 1.0; // Avoid numerical instability
   return std::sin(x) / x;
 }
+
+// #include <cmath>
+// #include "KrakenLib/ramsete.hpp"
+// #include "devices.hpp"
+
+// RamseteController::RamseteController(double k1, double k2, double k3, double
+// L,
+//                                      double max_velocity)
+//     : k1(k1), k2(k2), k3(k3), L(L), max_velocity(max_velocity),
+//       max_voltage(12000), v_L(0), v_R(0) {}
+
+// void RamseteController::update(const Point &currentPose,
+//                                const Point &desiredState) {
+//   double e_x = desiredState.x - currentPose.x;
+//   double e_y = desiredState.y - currentPose.y;
+//   double e_theta = normalizeAngle(desiredState.theta - currentPose.theta);
+
+//   // Transform errors to the robot's local frame
+//   double e_x_local = cos(currentPose.theta) * e_x + sin(currentPose.theta) *
+//   e_y; double e_y_local = -sin(currentPose.theta) * e_x +
+//   cos(currentPose.theta) * e_y;
+
+//   // Compute desired linear and angular velocities
+//   double v_d = desiredState.velocity;  // Expected linear velocity
+//   double omega_d = desiredState.angularVelocity; // Expected angular velocity
+
+//   // Ramsete control laws
+//   double v = v_d * cos(e_theta) + k1 * e_x_local;
+//   double omega = omega_d + k2 * v_d * sinc(e_theta) * e_y_local + k3 *
+//   e_theta;
+
+//   // Compute wheel velocities
+//   v_L = v - (L / 2.0) * omega;
+//   v_R = v + (L / 2.0) * omega;
+
+//   saturateVelocities();
+// }
+
+// void RamseteController::applyMotorVoltages() {
+//   left_motor_group.move_voltage(static_cast<int>(velocityToVoltage(v_L)));
+//   right_motor_group.move_voltage(static_cast<int>(velocityToVoltage(v_R)));
+// }
+
+// void RamseteController::saturateVelocities() {
+//   double max_wheel_velocity = std::max(std::abs(v_L), std::abs(v_R));
+//   if (max_wheel_velocity > max_velocity) {
+//     double scale = max_velocity / max_wheel_velocity;
+//     v_L *= scale;
+//     v_R *= scale;
+//   }
+// }
+
+// double RamseteController::normalizeAngle(double angle) {
+//   while (angle > M_PI)
+//     angle -= 2 * M_PI;
+//   while (angle < -M_PI)
+//     angle += 2 * M_PI;
+//   return angle;
+// }
+
+// // Converts velocity to a motor voltage within the max voltage range.
+// double RamseteController::velocityToVoltage(double velocity) const {
+//   return (velocity / max_velocity) * max_voltage;
+// }
+
+// // Sinc function to avoid division by zero or instability.
+// double RamseteController::sinc(double x) const {
+//   if (std::abs(x) < 1e-6)
+//     return 1.0; // Avoid numerical instability
+//   return std::sin(x) / x;
+// }
+
+// #ifdef DEBUG
+// #include <iostream>
+// void RamseteController::debugOutput() const {
+//   std::cout << "v_L: " << v_L << ", v_R: " << v_R << std::endl;
+// }
+// #endif
