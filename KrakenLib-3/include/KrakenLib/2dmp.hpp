@@ -48,7 +48,7 @@ public:
    * @param max_acceleration The maximum allowed acceleration for the motion
    * profile.
    */
-  MotionProfile(double max_velocity, double max_acceleration);
+  MotionProfile(double max_velocity, double max_acceleration, SplineGen &splineGen);
 
   /**
    * @brief Adds a waypoint to the motion profile.
@@ -70,7 +70,7 @@ public:
   const std::vector<Point> &getMotionProfile() const;
 
 private:
-  SplineGen splineGen;              // Spline generator
+  //SplineGen splineGen;              // Spline generator
   std::vector<Point> motionProfile; // Generated motion profile
   double max_velocity;              // Maximum velocity
   double max_acceleration;          // Maximum acceleration

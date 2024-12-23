@@ -20,6 +20,9 @@ void on_center_button() {}
 void initialize() {
   // Auton Selector
   pros::Task autonSelectorTask(autonSelector);
+  imu.reset();
+  parallelTracker.reset();
+  perpedicularTracker.reset();
 }
 
 /**

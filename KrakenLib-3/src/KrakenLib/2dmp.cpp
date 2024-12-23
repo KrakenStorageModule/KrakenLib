@@ -81,7 +81,7 @@
  * @param max_acceleration The maximum acceleration allowed in the motion
  * profile.
  */
-MotionProfile::MotionProfile(double max_velocity, double max_acceleration)
+MotionProfile::MotionProfile(double max_velocity, double max_acceleration, SplineGen &splineGen)
     : max_velocity(max_velocity), max_acceleration(max_acceleration) {}
 
 /**
