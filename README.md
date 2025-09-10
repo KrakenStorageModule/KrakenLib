@@ -1,2 +1,2 @@
 # KrakenLib-3
-Restarted restarted with actual research lmao
+Restarted with proper research
